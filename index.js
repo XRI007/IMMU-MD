@@ -840,9 +840,8 @@ case "instadl": case "ig": case "igdl":
 }
 break;
 
-
 case "song": {
-  if (!text) return reply("🎵 Please provide a song name or YouTube URL.\n\n_Example:_ .song Let me love you");
+  if (!text) return reply("🎵 *Please provide a song name or YouTube URL.*\n\n_Example:_ `.song Let me love you`");
 
   try {
     let ytUrl = text.trim();
@@ -858,37 +857,35 @@ case "song": {
       ytUrl = search.videos[0].url;
     }
 
-    // Use Kaiz-API for downloading
-    const KAIZ_API_KEY = 'cf2ca612-296f-45ba-abbc-473f18f991eb';
-    const api = https://kaiz-apis.gleeze.com/api/ytdown-mp3?url=${encodeURIComponent(ytUrl)}&apikey=${KAIZ_API_KEY};
+    const api = `https://zenz.biz.id/downloader/ytmp3?url=${encodeURIComponent(ytUrl)}`;
     const { data } = await axios.get(api);
 
-    if (!data || !data.download_url) {
+    if (!data || !data.status || !data.download_url) {
       return reply("❌ Failed to fetch the audio. Try a different video.");
     }
 
-    // Get video info for metadata
-    const videoInfo = await yts({ videoId: ytUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i)?.[1] });
-    
+    const { title, duration, thumbnail, format, download_url } = data;
+
     await bot.sendMessage(m.chat, {
-      image: { url: videoInfo?.thumbnail || '' },
-      caption: 🎵 *Title:* ${videoInfo?.title || 'Unknown'}\n⏱ *Duration:* ${videoInfo?.timestamp || 'N/A'}\n👤 *Artist:* ${videoInfo?.author?.name || 'Unknown'},
+      image: { url: thumbnail },
+      caption: `🎵 *Title:* ${title}\n⏱️ *Duration:* ${duration} sec\n🎧 *Format:* ${format}`,
     }, { quoted: m });
 
     await bot.sendMessage(m.chat, {
-      audio: { url: data.download_url },
-      mimetype: 'audio/mpeg',
-      fileName: ${(videoInfo?.title || 'audio').replace(/[<>:"\/\\|?*]+/g, '')}.mp3
+      audio: { url: download_url },
+      mimetype: 'audio/mp4',
+      fileName: `${title}.mp3`
     }, { quoted: m });
 
   } catch (err) {
     console.error("❌ Song download error:", err);
-    reply("❌ Failed to fetch or send audio. Please try again later.");
+    reply("❌ Failed to fetch or send audio.");
   }
 }
 break;
     }
-  }    
+   }
+    
          
 
         // Status Reaction
