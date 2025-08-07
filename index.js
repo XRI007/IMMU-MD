@@ -631,6 +631,41 @@ case "autorecording": {
     }
 }
 break;
+
+case 'gitimg': {
+    try {
+        if (!text) {
+            return reply(
+                "🎯 Please provide a YouTube video link.\n\n" +
+                "Example: .gitimg https://youtu.be/abc123xyz"
+            );
+        }
+
+        // 🎯 Extract video ID from YouTube URL
+        let ytMatch = text.match(/(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/);
+        if (!ytMatch) {
+            return reply("❌ Invalid YouTube link. Please provide a valid one.");
+        }
+
+        let videoID = ytMatch[1];
+        let thumbURL = https://darkxonfive.github.io/THUMBNAIL/?id=${videoID};
+
+        // 🚀 Send original quality thumbnail with stylish caption
+        await bot.sendMessage(
+            m.chat,
+            {
+                image: { url: thumbURL },
+                caption: ✅ *Original YouTube Thumbnail*\n🎬 *Video ID:* ${videoID}\n\n✨ _Downloaded by_ *『 𝐈𝐌𝐌𝐔 𝐌𝐃 』🔥_
+            },
+            { quoted: m }
+        );
+
+    } catch (err) {
+        console.error("❌ gitimg command error:", err);
+        reply("⚠ Failed to fetch thumbnail. Please try again later.");
+    }
+}
+break;
              
 case "alwaysonline": {
     if (!isCreator) return reply("Only bot owner can use this command⚠️");
